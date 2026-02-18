@@ -2,134 +2,119 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LeetCode Solutions – Therakshith</title>
+<title>Rakshith | LeetCode Solutions</title>
 
 <style>
-:root {
-    --bg-color: #ffffff;
-    --text-color: #1f2328;
-    --border-color: #e6e6e6;
-    --link-color: #0969da;
-}
+  :root {
+    --bg: #ffffff;
+    --text: #111111;
+    --card: #f4f4f4;
+    --accent: #0077ff;
+  }
 
-.dark-mode {
-    --bg-color: #0d1117;
-    --text-color: #c9d1d9;
-    --border-color: #30363d;
-    --link-color: #58a6ff;
-}
+  body.dark {
+    --bg: #121212;
+    --text: #f0f0f0;
+    --card: #1e1e1e;
+    --accent: #4da3ff;
+  }
 
-body {
-    font-family: Georgia, serif;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 40px 24px;
-    line-height: 1.7;
-    background: var(--bg-color);
-    color: var(--text-color);
-    transition: background 0.3s, color 0.3s;
-}
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: 0.3s;
+  }
 
-h1 {
-    border-bottom: 2px solid var(--border-color);
-    padding-bottom: 10px;
-}
+  .top-bar {
+    display: flex;
+    justify-content: flex-end;
+    padding: 20px;
+  }
 
-h2 {
-    margin-top: 40px;
-}
-
-a {
-    color: var(--link-color);
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-.problem-item {
-    margin-bottom: 12px;
-    font-size: 18px;
-}
-
-.contact-box {
-    margin-top: 50px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border-color);
-    font-size: 16px;
-}
-
-.toggle-btn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
+  button {
     padding: 8px 14px;
-    border: 1px solid var(--border-color);
-    background: transparent;
-    color: var(--text-color);
-    cursor: pointer;
+    border: none;
     border-radius: 6px;
-}
+    cursor: pointer;
+    background: var(--accent);
+    color: white;
+  }
 
-.toggle-btn:hover {
-    opacity: 0.8;
-}
+  .container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+  }
 
-.footer {
-    margin-top: 40px;
-    font-size: 14px;
-    opacity: 0.7;
-}
+  .card {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  h1 {
+    margin-top: 0;
+  }
 </style>
 </head>
 
 <body>
 
-<button class="toggle-btn" onclick="toggleMode()">Toggle Dark Mode</button>
-
-<h1>LeetCode Solutions</h1>
-
-<p>
-Step-by-step explanations of selected problems.
-Focused on clarity and algorithmic reasoning.
-</p>
-
-<h2>Problems</h2>
-
-<div class="problem-item">
-<a href="problems/11-container-with-most-water.html">
-#11 – Container With Most Water
-</a>
+<div class="top-bar">
+  <button onclick="toggleTheme()">Toggle Dark Mode</button>
 </div>
 
-<div class="contact-box">
-<h2>Contact</h2>
+<div class="container">
 
-<p>
-Email:
-<a href="mailto:theraksith.dev@gmail.com">
-theraksith.dev@gmail.com
-</a>
-</p>
+  <div class="card">
+    <h1>Rakshith - LeetCode Solutions</h1>
+    <p>Clean step-by-step explanations with visual diagrams.</p>
+  </div>
 
-<p>
-GitHub:
-<a href="https://github.com/Therakshith-dev" target="_blank">
-github.com/Therakshith-dev
-</a>
-</p>
-</div>
+  <div class="card">
+    <h2>Problems</h2>
+    <p>
+      <a href="problems/11-container-with-most-water.html">
+        LC 11 - Container With Most Water
+      </a>
+    </p>
+  </div>
 
-<div class="footer">
-© 2026 Therakshith
+  <div class="card">
+    <h2>Contact</h2>
+    <p>Email: <a href="mailto:theraksith.dev@gmail.com">theraksith.dev@gmail.com</a></p>
+    <p>GitHub: <a href="https://github.com/Therakshith-dev" target="_blank">
+      github.com/Therakshith-dev
+    </a></p>
+  </div>
+
 </div>
 
 <script>
-function toggleMode() {
-    document.body.classList.toggle("dark-mode");
-}
+  function toggleTheme() {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("theme",
+      document.body.classList.contains("dark") ? "dark" : "light"
+    );
+  }
+
+  window.onload = function() {
+    if (localStorage.getItem("theme") === "dark") {
+      document.body.classList.add("dark");
+    }
+  };
 </script>
 
 </body>

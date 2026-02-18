@@ -2,101 +2,119 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>#11 – Container With Most Water</title>
+<title>LC 11 - Container With Most Water</title>
 
 <style>
-body {
-    font-family: Georgia, serif;
+  :root {
+    --bg: #ffffff;
+    --text: #111111;
+    --card: #f4f4f4;
+    --accent: #0077ff;
+  }
+
+  body.dark {
+    --bg: #121212;
+    --text: #f0f0f0;
+    --card: #1e1e1e;
+    --accent: #4da3ff;
+  }
+
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: 0.3s;
+  }
+
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+  }
+
+  button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: var(--accent);
+    color: white;
+  }
+
+  .container {
     max-width: 900px;
-    margin: 0 auto;
-    padding: 40px 24px;
-    line-height: 1.7;
-    background: white;
-    color: #1f2328;
-}
+    margin: 20px auto 60px auto;
+    padding: 20px;
+  }
 
-h1 {
-    border-bottom: 2px solid #e6e6e6;
-    padding-bottom: 10px;
-}
-
-h2 {
-    margin-top: 40px;
-}
-
-code {
-    background: #f6f8fa;
-    padding: 3px 6px;
-    border-radius: 6px;
-    font-family: monospace;
-}
-
-pre {
-    background: #f6f8fa;
-    padding: 15px;
-    border-radius: 10px;
-    overflow-x: auto;
-}
-
-a {
-    color: #0969da;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-.note {
-    background: #fff8c5;
-    padding: 12px;
+  .card {
+    background: var(--card);
+    padding: 20px;
     border-radius: 8px;
-    margin-top: 15px;
-}
+    margin-bottom: 20px;
+  }
 
-img {
-    max-width: 100%;
-    height: auto;
-    margin-top: 20px;
-    border: 1px solid #e6e6e6;
+  img {
+    width: 100%;
+    border-radius: 8px;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+
+  pre {
+    background: #00000020;
+    padding: 15px;
     border-radius: 6px;
-}
+    overflow-x: auto;
+  }
 </style>
 </head>
 
 <body>
 
-<p><a href="../index.html">← Back to Home</a></p>
+<div class="top-bar">
+  <a href="../index.html">← Back to Home</a>
+  <button onclick="toggleTheme()">Toggle Dark Mode</button>
+</div>
 
-<h1>#11 – Container With Most Water</h1>
+<div class="container">
 
+  <div class="card">
+    <h1>LeetCode 11 - Container With Most Water</h1>
+    <p>Two Pointer Approach</p>
+  </div>
 
-<h2>Problem</h2>
+  <div class="card">
+    <h2>Visual Diagram</h2>
+    <img src="../images/lc11.png" alt="LC11 Diagram">
+  </div>
 
-<p>
-Given an integer array <code>height</code>, find two lines that together with the x-axis
-form a container such that the container contains the most water.
-</p>
+  <div class="card">
+    <h2>Approach</h2>
+    <ul>
+      <li>Initialize left pointer at 0</li>
+      <li>Initialize right pointer at n - 1</li>
+      <li>Calculate width = right - left</li>
+      <li>Height = min(height[left], height[right])</li>
+      <li>Area = width * height</li>
+      <li>Update max_area</li>
+      <li>Move the smaller height pointer inward</li>
+      <li>Repeat until left &lt; right</li>
+    </ul>
+  </div>
 
----
-
-<h2>Visualization</h2>
-
-<img src="../images/lc11.png" alt="LC11 Visualization">
-
----
-
-<p>
-Water stored = <code>width × minimum height</code>.
-</p>
-
----
-
-<h2>Code (Python)</h2>
-
+  <div class="card">
+    <h2>Code</h2>
 <pre>
-def maxArea(height) -> int:
+def maxArea(height):
     left = 0
     right = len(height) - 1
     max_area = 0
@@ -105,7 +123,7 @@ def maxArea(height) -> int:
         width = right - left
         h = min(height[left], height[right])
         area = width * h
-        max_area = max(area, max_area)
+        max_area = max(max_area, area)
 
         if height[left] < height[right]:
             left += 1
@@ -114,31 +132,24 @@ def maxArea(height) -> int:
 
     return max_area
 </pre>
+  </div>
 
----
-
-<h2>Explanation</h2>
-
-<ul>
-<li>We treat indices as the x-axis.</li>
-<li>Heights represent the y-axis.</li>
-<li>Area between two walls is:
-<pre>Area = width × minimum(height[left], height[right])</pre>
-</li>
-<li>Width = <code>right - left</code>.</li>
-<li>The shorter wall limits the water level.</li>
-</ul>
-
----
-
-<h2>Key Insight</h2>
-
-<div class="note">
-Move the pointer at the shorter wall.
-Keeping the taller wall and moving the shorter one gives a chance to find a larger area.
 </div>
 
+<script>
+  function toggleTheme() {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("theme",
+      document.body.classList.contains("dark") ? "dark" : "light"
+    );
+  }
 
+  window.onload = function() {
+    if (localStorage.getItem("theme") === "dark") {
+      document.body.classList.add("dark");
+    }
+  };
+</script>
 
 </body>
 </html>
