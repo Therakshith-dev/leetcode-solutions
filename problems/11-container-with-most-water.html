@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#11 – Container With Most Water</title>
+
+<style>
+body {
+    font-family: Georgia, serif;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px;
+    line-height: 1.7;
+    background: white;
+    color: #1f2328;
+}
+
+h1 {
+    border-bottom: 2px solid #e6e6e6;
+    padding-bottom: 10px;
+}
+
+h2 {
+    margin-top: 40px;
+}
+
+code {
+    background: #f6f8fa;
+    padding: 3px 6px;
+    border-radius: 6px;
+    font-family: monospace;
+}
+
+pre {
+    background: #f6f8fa;
+    padding: 15px;
+    border-radius: 10px;
+    overflow-x: auto;
+}
+
+a {
+    color: #0969da;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.note {
+    background: #fff8c5;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    margin-top: 20px;
+    border: 1px solid #e6e6e6;
+    border-radius: 6px;
+}
+</style>
+</head>
+
+<body>
+
+<p><a href="../index.html">← Back to Home</a></p>
+
+<h1>#11 – Container With Most Water</h1>
+
+<h2>Problem</h2>
+
+<p>
+Given an integer array <code>height</code>, find two lines that together with the x-axis
+form a container such that the container contains the most water.
+</p>
+
+<p>
+Water stored = <code>width × minimum height</code>.
+</p>
+
+---
+
+<h2>Code (Python)</h2>
+
+<pre>
+def maxArea(height) -> int:
+    left = 0
+    right = len(height) - 1
+    max_area = 0
+
+    while left < right:
+        width = right - left
+        h = min(height[left], height[right])
+        area = width * h
+        max_area = max(area, max_area)
+
+        if height[left] < height[right]:
+            left += 1
+        else:
+            right -= 1
+
+    return max_area
+</pre>
+
+---
+
+<h2>Explanation</h2>
+
+<ul>
+<li>We treat indices as the x-axis.</li>
+<li>Heights represent the y-axis.</li>
+<li>Area between two walls is:
+<pre>Area = width × minimum(height[left], height[right])</pre>
+</li>
+<li>Width = <code>right - left</code>.</li>
+<li>The shorter wall limits the water level.</li>
+</ul>
+
+---
+
+<h2>Key Insight</h2>
+
+<div class="note">
+Move the pointer at the shorter wall.
+Keeping the taller wall and moving the shorter one gives a chance to find a larger area.
+</div>
+
+---
+
+<h2>Visualization</h2>
+
+<img src="../images/lc11.png" alt="LC11 Visualization">
+
+---
+
+</body>
+</html>
