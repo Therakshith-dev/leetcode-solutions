@@ -97,7 +97,7 @@
 
 <div class="container">
 
-  <!-- IMAGE FIRST, ONLY ONCE -->
+ 
   <div class="card">
     <img src="../images/lc11.png" alt="LC11 Diagram">
   </div>
@@ -106,7 +106,7 @@
     <h1>LeetCode 11 — Container With Most Water</h1>
   </div>
 
-  <div class="card">
+  <!-- <div class="card">
     <h2>Approach</h2>
     <ul>
       <li>Left pointer at 0</li>
@@ -117,7 +117,97 @@
       <li>Update max_area</li>
       <li>Move the smaller pointer inward</li>
     </ul>
-  </div>
+  </div> -->
+
+  <div class="card">
+  <h2>Detailed Explanation (Two Pointers)</h2>
+
+  <p>
+    We are given an array <code>height</code>. Each value is a vertical line at that index.
+    If we pick two lines at indices <code>left</code> and <code>right</code>, they form a container.
+  </p>
+
+  <p>
+    The amount of water that container can hold is:
+  </p>
+
+  <pre>area = width × height</pre>
+
+  <p>
+    <b>Width</b> is the distance between the two indices:
+  </p>
+
+  <pre>width = right - left</pre>
+
+  <p>
+    <b>Height</b> is limited by the shorter wall, because water will spill over the shorter side:
+  </p>
+
+  <pre>height = min(height[left], height[right])</pre>
+
+  <hr>
+
+  <h3>Why Two Pointers Works</h3>
+
+  <p>
+    We start with the widest possible container: <code>left = 0</code> and <code>right = n - 1</code>.
+    That gives the maximum width.
+  </p>
+
+  <p>
+    Then we compute the area and try to improve it by moving pointers inward.
+    But the key question is: <b>Which pointer should we move?</b>
+  </p>
+
+  <h3>Key Insight: Move the Shorter Wall</h3>
+
+  <p>
+    Suppose <code>height[left] &lt; height[right]</code>. That means the left wall is the limiting wall.
+    The water level cannot go above <code>height[left]</code> no matter how tall the right wall is.
+  </p>
+
+  <p>
+    If we move the <b>right</b> pointer inward while keeping the shorter left wall,
+    two bad things happen:
+  </p>
+
+  <ul>
+    <li>The width becomes smaller (<code>right - left</code> decreases).</li>
+    <li>The height is still limited by the same short left wall.</li>
+  </ul>
+
+  <p>
+    So the area cannot increase by moving the taller side while the shorter side stays the same.
+    The only chance to get a larger area is to find a taller left wall.
+  </p>
+
+  <p>
+    That’s why when <code>height[left] &lt; height[right]</code>, we do:
+  </p>
+
+  <pre>left += 1</pre>
+
+  <p>
+    And if <code>height[right] &lt;= height[left]</code>, then the right wall is limiting,
+    so we try to find a taller right wall by doing:
+  </p>
+
+  <pre>right -= 1</pre>
+
+  <hr>
+
+  <h3>What the Loop Guarantees</h3>
+
+  <p>
+    Every step reduces the width, so we must compensate by trying to increase the minimum height.
+    Moving the shorter pointer is the only move that can potentially increase the minimum height.
+  </p>
+
+  <p>
+    We keep track of the best answer in <code>max_area</code>, and when the pointers cross,
+    we’ve tested all useful candidates and return the maximum.
+  </p>
+</div>
 
   <div class="card">
     <h2>Code</h2>
