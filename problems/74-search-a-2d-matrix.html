@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LC 74 - Search a 2D Matrix</title>
+
+<style>
+  :root {
+    --bg: #ffffff;
+    --text: #111111;
+    --card: #f3f3f3;
+    --accent: #0077ff;
+  }
+
+  body.dark {
+    --bg: #121212;
+    --text: #f0f0f0;
+    --card: #1e1e1e;
+    --accent: #4da3ff;
+  }
+
+  body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: 0.3s;
+  }
+
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+  }
+
+  button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: var(--accent);
+    color: white;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 20px auto 60px auto;
+    padding: 20px;
+  }
+
+  .card {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+
+  a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  pre {
+    background: #00000020;
+    padding: 15px;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+
+  footer {
+    text-align: center;
+    padding: 40px 0 20px 0;
+    font-size: 14px;
+    opacity: 0.7;
+  }
+</style>
+
+<script>
+  if (localStorage.getItem("theme") === "dark") {
+    document.documentElement.classList.add("dark");
+  }
+</script>
+
+</head>
+
+<body>
+
+<div class="top-bar">
+  <a href="../index.html">← Back</a>
+  <button onclick="toggleTheme()">Toggle Theme</button>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <h1>LeetCode 74 — Search a 2D Matrix</h1>
+  </div>
+
+  <div class="card">
+    <h2>Problem Insight</h2>
+
+    <p>
+      The matrix has two important properties:
+    </p>
+
+    <ul>
+      <li>Each row is sorted.</li>
+      <li>The first element of each row is greater than the last element of the previous row.</li>
+    </ul>
+
+    <p>
+      Because of these properties, the entire matrix behaves like one single sorted array.
+    </p>
+
+    <p>
+      That allows us to apply binary search.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Core Idea</h2>
+
+    <p>
+      Total elements = rows × columns.
+    </p>
+
+    <p>
+      We perform binary search between:
+    </p>
+
+<pre>
+left = 0
+right = rows * cols - 1
+</pre>
+
+    <p>
+      At every step we calculate:
+    </p>
+
+<pre>
+mid = (left + right) // 2
+</pre>
+
+    <p>
+      Since the matrix is 2D, we convert the 1D index back:
+    </p>
+
+<pre>
+row = mid // cols
+col = mid % cols
+</pre>
+
+    <p>
+      Then compare matrix[row][col] with the target.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Why This Mapping Works</h2>
+
+    <p>
+      Each row contains exactly <code>cols</code> elements.
+    </p>
+
+    <p>
+      Every time we move <code>cols</code> positions in the 1D view,
+      we move to the next row.
+    </p>
+
+    <p>
+      Integer division (<code>//</code>) tells us which row.
+      Modulus (<code>%</code>) tells us the column inside that row.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>Python Implementation</h2>
+
+<pre>
+from typing import List
+
+class Solution:
+    def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
+        if not matrix or not matrix[0]:
+            return False
+
+        rows = len(matrix)
+        cols = len(matrix[0])
+
+        left = 0
+        right = rows * cols - 1
+
+        while left <= right:
+            mid = (left + right) // 2
+
+            row = mid // cols
+            col = mid % cols
+
+            value = matrix[row][col]
+
+            if value == target:
+                return True
+            elif value < target:
+                left = mid + 1
+            else:
+                right = mid - 1
+
+        return False
+</pre>
+
+  </div>
+
+  <div class="card">
+    <h2>Complexity</h2>
+    <ul>
+      <li>Time: O(log(m × n))</li>
+      <li>Space: O(1)</li>
+    </ul>
+  </div>
+
+</div>
+
+<footer>
+  © Rakshith
+</footer>
+
+<script>
+  function toggleTheme() {
+    document.body.classList.toggle("dark");
+    localStorage.setItem(
+      "theme",
+      document.body.classList.contains("dark") ? "dark" : "light"
+    );
+  }
+
+  window.onload = function () {
+    if (localStorage.getItem("theme") === "dark") {
+      document.body.classList.add("dark");
+    }
+  };
+</script>
+
+</body>
+</html>
