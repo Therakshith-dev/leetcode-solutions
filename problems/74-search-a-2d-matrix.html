@@ -2,185 +2,146 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>LC 74 - Search a 2D Matrix</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeetCode 74 — Search a 2D Matrix</title>
 
 <style>
-  :root {
+:root {
     --bg: #ffffff;
     --text: #111111;
-    --card: #f3f3f3;
-    --accent: #0077ff;
-  }
+    --card: #f4f4f4;
+    --accent: #2563eb;
+    --danger-bg: #2b2b2b;
+    --danger-text: #ff4d4d;
+}
 
-  body.dark {
-    --bg: #121212;
-    --text: #f0f0f0;
-    --card: #1e1e1e;
-    --accent: #4da3ff;
-  }
+body.dark {
+    --bg: #0f172a;
+    --text: #e5e7eb;
+    --card: #1e293b;
+    --accent: #60a5fa;
+    --danger-bg: #1a1a1a;
+    --danger-text: #ff6b6b;
+}
 
-  body {
+body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--bg);
     color: var(--text);
-    transition: 0.3s;
-  }
+    transition: 0.2s ease;
+}
 
-  .top-bar {
+.container {
+    max-width: 800px;
+    margin: 60px auto;
+    padding: 0 20px;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.topbar {
     display: flex;
     justify-content: space-between;
-    padding: 20px;
-  }
+    margin-bottom: 40px;
+}
 
-  button {
-    padding: 8px 14px;
+button {
+    background: var(--card);
     border: none;
+    padding: 8px 14px;
     border-radius: 6px;
     cursor: pointer;
-    background: var(--accent);
-    color: white;
-  }
+}
 
-  .container {
-    max-width: 900px;
-    margin: 20px auto 60px auto;
-    padding: 20px;
-  }
+h1 {
+    margin-bottom: 30px;
+}
 
-  .card {
+.section {
+    margin-bottom: 40px;
+}
+
+.card {
     background: var(--card);
     padding: 20px;
     border-radius: 8px;
-    margin-bottom: 20px;
-  }
+}
 
-  a {
-    color: var(--accent);
-    text-decoration: none;
-  }
-
-  pre {
-    background: #00000020;
-    padding: 15px;
-    border-radius: 6px;
+pre {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 8px;
     overflow-x: auto;
-  }
+}
 
-  footer {
+.important-line {
+    background: var(--danger-bg);
+    color: var(--danger-text);
+    font-family: monospace;
+    padding: 14px 18px;
+    border-left: 5px solid var(--danger-text);
+    border-radius: 6px;
+    margin: 25px 0;
+}
+
+footer {
+    margin-top: 80px;
     text-align: center;
-    padding: 40px 0 20px 0;
+    opacity: 0.6;
     font-size: 14px;
-    opacity: 0.7;
-  }
+}
 </style>
-
-<script>
-  if (localStorage.getItem("theme") === "dark") {
-    document.documentElement.classList.add("dark");
-  }
-</script>
-
 </head>
 
 <body>
 
-<div class="top-bar">
-  <a href="../index.html">← Back</a>
-  <button onclick="toggleTheme()">Toggle Theme</button>
-</div>
-
 <div class="container">
 
-  <div class="card">
-    <h1>LeetCode 74 — Search a 2D Matrix</h1>
-  </div>
+<div class="topbar">
+    <a href="../index.html">← Back</a>
+    <button onclick="toggleTheme()">Toggle Theme</button>
+</div>
 
-  <div class="card">
-    <h2>Problem Insight</h2>
+<h1>LeetCode 74 — Search a 2D Matrix</h1>
 
-    <p>
-      The matrix has two important properties:
-    </p>
+<div class="section card">
+<h3>Core Idea</h3>
+<p>
+The matrix is globally sorted.  
+We can treat it like a virtual 1D sorted array and apply binary search.
+</p>
+</div>
 
-    <ul>
-      <li>Each row is sorted.</li>
-      <li>The first element of each row is greater than the last element of the previous row.</li>
-    </ul>
+<div class="section">
+<h3>Critical Logic</h3>
 
-    <p>
-      Because of these properties, the entire matrix behaves like one single sorted array.
-    </p>
+<div class="important-line">
+elif value &lt; target:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;left = middle + 1
+</div>
 
-    <p>
-      That allows us to apply binary search.
-    </p>
-  </div>
+<p>
+If the current value is smaller than the target,  
+then everything to the left of it is also smaller (because the matrix is sorted).
+</p>
 
-  <div class="card">
-    <h2>Core Idea</h2>
+<p>
+So we discard the entire left half and search only the right half.
+</p>
+</div>
 
-    <p>
-      Total elements = rows × columns.
-    </p>
+<div class="section">
+<h3>Full Implementation</h3>
 
-    <p>
-      We perform binary search between:
-    </p>
-
-<pre>
-left = 0
-right = rows * cols - 1
-</pre>
-
-    <p>
-      At every step we calculate:
-    </p>
-
-<pre>
-mid = (left + right) // 2
-</pre>
-
-    <p>
-      Since the matrix is 2D, we convert the 1D index back:
-    </p>
-
-<pre>
-row = mid // cols
-col = mid % cols
-</pre>
-
-    <p>
-      Then compare matrix[row][col] with the target.
-    </p>
-  </div>
-
-  <div class="card">
-    <h2>Why This Mapping Works</h2>
-
-    <p>
-      Each row contains exactly <code>cols</code> elements.
-    </p>
-
-    <p>
-      Every time we move <code>cols</code> positions in the 1D view,
-      we move to the next row.
-    </p>
-
-    <p>
-      Integer division (<code>//</code>) tells us which row.
-      Modulus (<code>%</code>) tells us the column inside that row.
-    </p>
-  </div>
-
-  <div class="card">
-    <h2>Python Implementation</h2>
-
-<pre>
-from typing import List
+<pre><code>from typing import List
 
 class Solution:
     def searchMatrix(self, matrix: List[List[int]], target: int) -> bool:
+
         if not matrix or not matrix[0]:
             return False
 
@@ -190,54 +151,40 @@ class Solution:
         left = 0
         right = rows * cols - 1
 
-        while left <= right:
-            mid = (left + right) // 2
+        while left &lt;= right:
+            middle = (left + right) // 2
 
-            row = mid // cols
-            col = mid % cols
+            row = middle // cols
+            col = middle % cols
 
             value = matrix[row][col]
 
             if value == target:
                 return True
-            elif value < target:
-                left = mid + 1
+            elif value &lt; target:
+                left = middle + 1
             else:
-                right = mid - 1
+                right = middle - 1
 
-        return False
-</pre>
-
-  </div>
-
-  <div class="card">
-    <h2>Complexity</h2>
-    <ul>
-      <li>Time: O(log(m × n))</li>
-      <li>Space: O(1)</li>
-    </ul>
-  </div>
-
+        return False</code></pre>
 </div>
 
 <footer>
-  © Rakshith
+© Rakshith
 </footer>
 
-<script>
-  function toggleTheme() {
-    document.body.classList.toggle("dark");
-    localStorage.setItem(
-      "theme",
-      document.body.classList.contains("dark") ? "dark" : "light"
-    );
-  }
+</div>
 
-  window.onload = function () {
-    if (localStorage.getItem("theme") === "dark") {
-      document.body.classList.add("dark");
-    }
-  };
+<script>
+function toggleTheme() {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("theme",
+        document.body.classList.contains("dark") ? "dark" : "light");
+}
+
+if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark");
+}
 </script>
 
 </body>
