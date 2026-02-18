@@ -9,19 +9,23 @@
 :root {
     --bg: #ffffff;
     --text: #111111;
-    --card: #f4f4f4;
+    --card: #f5f5f5;
     --accent: #2563eb;
     --danger-bg: #2b2b2b;
     --danger-text: #ff4d4d;
+    --insight-bg: #f0f9ff;
+    --insight-border: #2563eb;
 }
 
 body.dark {
-    --bg: #0f172a;
-    --text: #e5e7eb;
-    --card: #1e293b;
+    --bg: #0a0a0a;
+    --text: #e5e5e5;
+    --card: #151515;
     --accent: #60a5fa;
     --danger-bg: #1a1a1a;
     --danger-text: #ff6b6b;
+    --insight-bg: #121212;
+    --insight-border: #60a5fa;
 }
 
 body {
@@ -38,15 +42,15 @@ body {
     padding: 0 20px;
 }
 
-a {
-    color: var(--accent);
-    text-decoration: none;
-}
-
 .topbar {
     display: flex;
     justify-content: space-between;
     margin-bottom: 40px;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
 }
 
 button {
@@ -88,6 +92,15 @@ pre {
     margin: 25px 0;
 }
 
+.insight-block {
+    background: var(--insight-bg);
+    border-left: 4px solid var(--insight-border);
+    padding: 18px;
+    border-radius: 6px;
+    margin-top: 20px;
+    font-family: monospace;
+}
+
 footer {
     margin-top: 80px;
     text-align: center;
@@ -112,12 +125,12 @@ footer {
 <h3>Core Idea</h3>
 <p>
 The matrix is globally sorted.  
-We can treat it like a virtual 1D sorted array and apply binary search.
+We treat it as a virtual 1D sorted array and perform binary search.
 </p>
 </div>
 
 <div class="section">
-<h3>Critical Logic</h3>
+<h3>Critical Binary Search Logic</h3>
 
 <div class="important-line">
 elif value &lt; target:<br>
@@ -125,12 +138,47 @@ elif value &lt; target:<br>
 </div>
 
 <p>
-If the current value is smaller than the target,  
-then everything to the left of it is also smaller (because the matrix is sorted).
+If the current value is smaller than the target, then everything to the left
+is also smaller (because the matrix is sorted).
 </p>
 
 <p>
-So we discard the entire left half and search only the right half.
+So we discard the entire left half and search only in the right half.
+</p>
+</div>
+
+<div class="section">
+<h3>Why <code>//</code> and <code>%</code> Work</h3>
+
+<div class="insight-block">
+row = middle // cols<br>
+col = middle % cols
+</div>
+
+<p>
+We are pretending the matrix is flattened into one long array.
+</p>
+
+<p>
+If each row has <strong>cols</strong> elements:
+</p>
+
+<ul>
+<li><strong>middle // cols</strong> tells us how many full rows we skip → that gives the row index.</li>
+<li><strong>middle % cols</strong> tells us how far inside that row we are → that gives the column index.</li>
+</ul>
+
+<p>
+Example: if cols = 4 and middle = 6
+</p>
+
+<ul>
+<li>6 // 4 = 1 → row 1</li>
+<li>6 % 4 = 2 → column 2</li>
+</ul>
+
+<p>
+So index 6 in the virtual array maps to matrix[1][2].
 </p>
 </div>
 
