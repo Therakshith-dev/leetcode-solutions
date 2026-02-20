@@ -1,165 +1,186 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>LC 2468 — Split Message Based on Limit</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeetCode 2468 — Split Message Based on Limit</title>
 
 <style>
-  :root {
+:root {
     --bg: #ffffff;
     --text: #111111;
-    --card: #f3f3f3;
-    --accent: #0077ff;
-    --danger: #d32f2f;
-    --good: #2e7d32;
-  }
+    --card: #f5f5f5;
+    --accent: #2563eb;
+    --danger-bg: #2b2b2b;
+    --danger-text: #ff4d4d;
+    --insight-bg: #f0f9ff;
+    --insight-border: #2563eb;
+}
 
-  body.dark {
-    --bg: #121212;
-    --text: #f0f0f0;
-    --card: #1e1e1e;
-    --accent: #4da3ff;
-    --danger: #ff6b6b;
-    --good: #4caf50;
-  }
+body.dark {
+    --bg: #0a0a0a;
+    --text: #e5e5e5;
+    --card: #151515;
+    --accent: #60a5fa;
+    --danger-bg: #1a1a1a;
+    --danger-text: #ff6b6b;
+    --insight-bg: #121212;
+    --insight-border: #60a5fa;
+}
 
-  body {
+body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--bg);
     color: var(--text);
-    transition: 0.3s;
-  }
+    transition: 0.2s ease;
+}
 
-  .top-bar {
+.container {
+    max-width: 800px;
+    margin: 60px auto;
+    padding: 0 20px;
+}
+
+.topbar {
     display: flex;
     justify-content: space-between;
-    padding: 20px;
-  }
+    margin-bottom: 40px;
+}
 
-  button {
-    padding: 8px 14px;
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+button {
+    background: var(--card);
     border: none;
+    padding: 8px 14px;
     border-radius: 6px;
     cursor: pointer;
-    background: var(--accent);
-    color: white;
-  }
+}
 
-  .container {
-    max-width: 900px;
-    margin: 20px auto;
-    padding: 20px;
-  }
+h1 {
+    margin-bottom: 30px;
+}
 
-  .card {
+.section {
+    margin-bottom: 40px;
+}
+
+.card {
     background: var(--card);
     padding: 20px;
     border-radius: 8px;
-    margin-bottom: 20px;
-  }
+}
 
-  pre {
-    background: #0d1117;
-    color: #e6edf3;
-    padding: 15px;
-    border-radius: 6px;
+pre {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 8px;
     overflow-x: auto;
-  }
+}
 
-  .danger {
-    color: var(--danger);
-    font-weight: bold;
-  }
+.important-line {
+    background: var(--danger-bg);
+    color: var(--danger-text);
+    font-family: monospace;
+    padding: 14px 18px;
+    border-left: 5px solid var(--danger-text);
+    border-radius: 6px;
+    margin: 25px 0;
+}
 
-  .good {
-    color: var(--good);
-    font-weight: bold;
-  }
+.insight-block {
+    background: var(--insight-bg);
+    border-left: 4px solid var(--insight-border);
+    padding: 18px;
+    border-radius: 6px;
+    margin-top: 20px;
+    font-family: monospace;
+}
 
-  a {
-    color: var(--accent);
-    text-decoration: none;
-  }
-
-  footer {
+footer {
+    margin-top: 80px;
     text-align: center;
-    padding: 40px 0 20px 0;
+    opacity: 0.6;
     font-size: 14px;
-    opacity: 0.7;
-  }
+}
 </style>
-
-<script>
-  // Match your existing system (use body.dark)
-  window.onload = function () {
-    if (localStorage.getItem("theme") === "dark") {
-      document.body.classList.add("dark");
-    }
-  };
-</script>
-
 </head>
 
 <body>
 
-<div class="top-bar">
-  <a href="../index.html">← Back</a>
-  <button onclick="toggleTheme()">Toggle Theme</button>
-</div>
-
 <div class="container">
 
-  <div class="card">
-    <h1>LC 2468 — Split Message Based on Limit</h1>
-    <p>
-      Split a string into the <span class="good">fewest number of parts</span>
-      such that each part ends with a suffix
-      <code>&lt;a/b&gt;</code> and total length ≤ limit.
-    </p>
-  </div>
+<div class="topbar">
+    <a href="../index.html">← Back</a>
+    <button onclick="toggleTheme()">Toggle Theme</button>
+</div>
 
-  <div class="card">
-    <h2>Core Idea</h2>
-    <p>
-      We try different values of <code>b</code> (number of parts).
-      For each candidate <code>b</code>, we compute the
-      <span class="good">total capacity</span> available for message characters.
-    </p>
+<h1>LeetCode 2468 — Split Message Based on Limit</h1>
 
-    <p>
-      Suffix format: <code>&lt;a/b&gt;</code>
-    </p>
+<div class="section card">
+<h3>Core Idea</h3>
+<p>
+We try different values of <code>b</code> (number of parts).
+For each candidate <code>b</code>, we compute the total capacity
+available to store message characters.
+</p>
 
-    <p>
-      Suffix length = digits(a) + digits(b) + 3
-    </p>
+<p>
+Suffix format: <code>&lt;a/b&gt;</code>
+</p>
 
-    <p class="danger">
-      If suffix length ≥ limit → impossible for that b.
-    </p>
-  </div>
+<p>
+Suffix length = digits(a) + digits(b) + 3
+</p>
+</div>
 
-  <div class="card">
-    <h2>Why Digit Grouping?</h2>
-    <p>
-      Instead of iterating from a = 1 to b one by one (which causes TLE),
-      we group indices by digit length:
-    </p>
+<div class="section">
+<h3>Critical Capacity Condition</h3>
 
-    <ul>
-      <li>1–9 → 1 digit</li>
-      <li>10–99 → 2 digits</li>
-      <li>100–999 → 3 digits</li>
-    </ul>
+<div class="important-line">
+if suffix_length &gt;= limit:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;break
+</div>
 
-    <p>
-      This reduces complexity to roughly O(n log n).
-    </p>
-  </div>
+<p>
+If the suffix itself takes up the entire limit,
+there is no space left to store message characters.
+That value of <code>b</code> is impossible.
+</p>
+</div>
 
-  <div class="card">
-    <h2>Code</h2>
+<div class="section">
+<h3>Why Digit Grouping Works</h3>
+
+<div class="insight-block">
+digits = len(str(a))<br>
+end = min(b, 10**digits - 1)<br>
+count = end - a + 1
+</div>
+
+<p>
+Instead of iterating through every <code>a</code> individually,
+we group indices by digit length:
+</p>
+
+<ul>
+<li>1–9 → 1 digit</li>
+<li>10–99 → 2 digits</li>
+<li>100–999 → 3 digits</li>
+</ul>
+
+<p>
+This reduces time complexity and avoids TLE.
+</p>
+</div>
+
+<div class="section">
+<h3>Full Implementation</h3>
+
 <pre><code>class Solution:
     def splitMessage(self, message: str, limit: int):
         n = len(message)
@@ -199,22 +220,24 @@
             return result
 
         return []</code></pre>
-  </div>
-
 </div>
 
 <footer>
-  © Rakshith
+© Rakshith
 </footer>
 
+</div>
+
 <script>
-  function toggleTheme() {
+function toggleTheme() {
     document.body.classList.toggle("dark");
-    localStorage.setItem(
-      "theme",
-      document.body.classList.contains("dark") ? "dark" : "light"
-    );
-  }
+    localStorage.setItem("theme",
+        document.body.classList.contains("dark") ? "dark" : "light");
+}
+
+if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark");
+}
 </script>
 
 </body>
