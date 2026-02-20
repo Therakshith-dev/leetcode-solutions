@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LeetCode 2468 — Split Message Based on Limit</title>
+
+  <style>
+    :root{
+      --bg: #ffffff;
+      --panel: #f6f7f9;
+      --text: #111111;
+      --muted: #555;
+      --border: #e5e7eb;
+
+      --accent: #2563eb;   /* blue */
+      --accent2: #16a34a;  /* green */
+      --warn: #b45309;     /* amber */
+      --danger: #dc2626;   /* red */
+
+      --code-bg: #0f172a;  /* deep slate */
+      --code-text: #e5e7eb;
+      --inline: #111827;
+
+      --chip-bg: #eef2ff;
+      --chip-text: #1e3a8a;
+      --shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+
+    body.dark{
+      --bg: #0b0f14;       /* true dark (not blue) */
+      --panel: #10161d;
+      --text: #e7eef7;
+      --muted: #a7b0bd;
+      --border: #1f2a37;
+
+      --accent: #60a5fa;
+      --accent2: #34d399;
+      --warn: #fbbf24;
+      --danger: #f87171;
+
+      --code-bg: #0a1220;
+      --code-text: #e5e7eb;
+      --inline: #e5e7eb;
+
+      --chip-bg: #111827;
+      --chip-text: #93c5fd;
+      --shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+
+    *{ box-sizing: border-box; }
+    body{
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 28px 18px 40px;
+    }
+
+    header{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0 18px;
+    }
+
+    .leftnav{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    a{
+      color: var(--accent);
+      text-decoration: none;
+    }
+    a:hover{ text-decoration: underline; }
+
+    .btn{
+      border: 1px solid var(--border);
+      background: var(--panel);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      font-weight: 600;
+    }
+
+    h1{
+      font-size: 28px;
+      margin: 10px 0 6px;
+      letter-spacing: -0.3px;
+    }
+
+    .subtitle{
+      color: var(--muted);
+      margin: 0 0 18px;
+      font-size: 14px;
+    }
+
+    .card{
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      margin: 14px 0;
+    }
+
+    .grid{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    @media (min-width: 900px){
+      .grid.two{
+        grid-template-columns: 1.05fr 0.95fr;
+        gap: 14px;
+      }
+    }
+
+    .chiprow{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .chip{
+      background: var(--chip-bg);
+      color: var(--chip-text);
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .callout{
+      border-left: 4px solid var(--accent);
+      padding: 12px 12px 12px 14px;
+      background: rgba(37,99,235,0.06);
+      border-radius: 14px;
+      margin: 10px 0;
+    }
+    body.dark .callout{ background: rgba(96,165,250,0.08); }
+
+    .callout.good{
+      border-left-color: var(--accent2);
+      background: rgba(22,163,74,0.08);
+    }
+    body.dark .callout.good{ background: rgba(52,211,153,0.08); }
+
+    .callout.warn{
+      border-left-color: var(--warn);
+      background: rgba(180,83,9,0.10);
+    }
+    body.dark .callout.warn{ background: rgba(251,191,36,0.10); }
+
+    .callout.danger{
+      border-left-color: var(--danger);
+      background: rgba(220,38,38,0.10);
+    }
+    body.dark .callout.danger{ background: rgba(248,113,113,0.10); }
+
+    .k{
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.03);
+      color: var(--inline);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 13px;
+      font-weight: 700;
+      margin: 0 2px;
+      transform: translateY(-1px);
+    }
+    body.dark .k{ background: rgba(255,255,255,0.05); }
+
+    pre{
+      margin: 0;
+      padding: 14px 14px;
+      background: var(--code-bg);
+      color: var(--code-text);
+      border-radius: 16px;
+      overflow-x: auto;
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .section-title{
+      margin: 0 0 10px;
+      font-size: 16px;
+      letter-spacing: -0.2px;
+    }
+
+    ul{ margin: 8px 0 0 20px; }
+    li{ margin: 6px 0; }
+
+    .small{
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    footer{
+      margin-top: 26px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .red{ color: var(--danger); font-weight: 800; }
+    .green{ color: var(--accent2); font-weight: 800; }
+    .blue{ color: var(--accent); font-weight: 800; }
+    .amber{ color: var(--warn); font-weight: 800; }
+  </style>
+
+  <script>
+    // Theme sync across ALL pages (index + all problems)
+    (function(){
+      const saved = localStorage.getItem("theme");
+      const theme = saved ? saved : "dark"; // default to dark
+      if(theme === "dark") document.documentElement.classList.add("dark");
+      else document.documentElement.classList.remove("dark");
+    })();
+  </script>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <div class="leftnav">
+        <a href="../index.html">← Back</a>
+        <span class="chip">Hard</span>
+        <span class="chip">LC 2468</span>
+        <span class="chip">String + Math</span>
+      </div>
+      <button id="themeBtn" class="btn" type="button">Toggle Theme</button>
+    </header>
+
+    <h1>LeetCode 2468 — Split Message Based on Limit</h1>
+    <p class="subtitle">
+      Goal: split <span class="k">message</span> into the <span class="blue">fewest parts</span>, each part has a suffix
+      <span class="k">&lt;a/b&gt;</span> and total length ≤ <span class="k">limit</span>.
+    </p>
+
+    <div class="card">
+      <h2 class="section-title">What the problem is really asking</h2>
+
+      <div class="callout">
+        Every part must look like:
+        <span class="k">[some text]</span> + <span class="k">&lt;a/b&gt;</span>
+        where:
+        <ul>
+          <li><span class="k">b</span> = total number of parts</li>
+          <li><span class="k">a</span> = part index (1 to b)</li>
+        </ul>
+        After removing suffixes and concatenating parts in order, you must get the original message.
+      </div>
+
+      <div class="callout warn">
+        Important constraint:
+        <ul>
+          <li>Each part (including suffix) must be length <span class="k">limit</span>, except the last can be shorter.</li>
+          <li>You must produce <span class="red">as few parts as possible</span>.</li>
+        </ul>
+      </div>
+
+      <div class="callout danger">
+        If a suffix itself is already too long (example: <span class="k">&lt;100/100&gt;</span>) so that
+        <span class="k">len(suffix) ≥ limit</span>,
+        then <span class="red">it is impossible</span> for that <span class="k">b</span>.
+      </div>
+    </div>
+
+    <div class="grid two">
+      <div class="card">
+        <h2 class="section-title">Main idea</h2>
+
+        <p>
+          We try different values of <span class="k">b</span> (number of parts).
+          For each candidate <span class="k">b</span>, we compute:
+        </p>
+
+        <div class="callout good">
+          <span class="green">TotalCapacity(b)</span> =
+          total number of message characters we can store across all parts,
+          after reserving space for each part’s suffix.
+        </div>
+
+        <p>
+          If <span class="k">TotalCapacity(b) ≥ len(message)</span>, then <span class="k">b</span> works.
+          We return the first working <span class="k">b</span> because that guarantees the <span class="blue">fewest parts</span>.
+        </p>
+
+        <div class="chiprow">
+          <span class="chip">Key trick: avoid O(b)</span>
+          <span class="chip">Group by digit length of a</span>
+          <span class="chip">Compute capacity in blocks</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">Why the digit grouping matters</h2>
+        <p>
+          Suffix length depends on how many digits are in <span class="k">a</span> and <span class="k">b</span>.
+        </p>
+
+        <div class="callout">
+          Suffix: <span class="k">&lt;a/b&gt;</span>
+          <br/>
+          Length = digits(a) + digits(b) + 3
+          <br/>
+          (the 3 comes from <span class="k">&lt;</span>, <span class="k">/</span>, <span class="k">&gt;</span>)
+        </div>
+
+        <p>
+          digits(a) is:
+        </p>
+        <ul>
+          <li>1 for 1..9</li>
+          <li>2 for 10..99</li>
+          <li>3 for 100..999</li>
+          <li>...</li>
+        </ul>
+
+        <div class="callout warn">
+          If you loop <span class="k">a = 1..b</span> for every candidate <span class="k">b</span>,
+          you’ll likely hit <span class="red">TLE</span> on long messages.
+        </div>
+
+        <p class="small">
+          The code avoids that by processing ranges of a with the same digit count in one shot.
+        </p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">Detailed walkthrough of your code</h2>
+
+      <p><span class="blue">Step 1:</span> loop over candidate <span class="k">b</span> from 1 to n</p>
+      <div class="callout">
+        We are trying to find the smallest number of parts.
+        So we try <span class="k">b = 1</span>, then <span class="k">2</span>, then <span class="k">3</span>, etc.
+        The first valid b is optimal.
+      </div>
+
+      <p><span class="blue">Step 2:</span> compute <span class="k">len_b = digits(b)</span></p>
+      <div class="callout">
+        <span class="k">len_b = len(str(b))</span> is the number of digits in b.
+        This matters because every suffix contains b.
+      </div>
+
+      <p><span class="blue">Step 3:</span> compute <span class="green">TotalCapacity(b)</span> using digit-blocks</p>
+
+      <div class="callout good">
+        Instead of iterating every a individually, we group a values that share the same digit length.
+        That makes the inner loop run about <span class="k">O(log b)</span> times, not <span class="k">O(b)</span>.
+      </div>
+
+      <p>
+        Inside the <span class="k">while a &lt;= b</span> loop:
+      </p>
+
+      <ul>
+        <li>
+          <span class="k">digits = len(str(a))</span>
+          — the digit count for the current block.
+        </li>
+        <li>
+          <span class="k">end = min(b, 10**digits - 1)</span>
+          — the last a in this block. Example:
+          if digits = 2 then end is 99 (or b if b &lt; 99).
+        </li>
+        <li>
+          <span class="k">count = end - a + 1</span>
+          — how many a’s are in this block.
+        </li>
+      </ul>
+
+      <div class="callout">
+        For that entire block, every suffix has the same length:
+        <br/>
+        <span class="k">suffix_length = digits + len_b + 3</span>
+      </div>
+
+      <div class="callout danger">
+        If <span class="k">suffix_length ≥ limit</span>, then there is no space left for message characters.
+        That b is impossible, so we break early.
+      </div>
+
+      <p>
+        Otherwise, each part in this block can store:
+      </p>
+
+      <div class="callout good">
+        payload_per_part = <span class="k">limit - suffix_length</span>
+        <br/>
+        block_payload = <span class="k">count * payload_per_part</span>
+      </div>
+
+      <p>
+        We accumulate that into <span class="k">total_capacity</span>.
+        Then jump to the next block:
+        <span class="k">a = end + 1</span>.
+      </p>
+
+      <p><span class="blue">Step 4:</span> if capacity is enough, build the answer</p>
+
+      <div class="callout">
+        If <span class="k">total_capacity &lt; n</span> (message length), then b is too small — continue to next b.
+        <br/>
+        If <span class="k">total_capacity ≥ n</span>, we can split and return.
+      </div>
+
+      <p>
+        Building is straightforward:
+      </p>
+      <ul>
+        <li>For each part index a = 1..b, make suffix <span class="k">&lt;a/b&gt;</span></li>
+        <li>Capacity for this part = <span class="k">limit - len(suffix)</span></li>
+        <li>Take that many characters from message, append suffix</li>
+      </ul>
+
+      <div class="callout warn">
+        Notice: when a grows from 9 to 10, <span class="k">digits(a)</span> increases,
+        so suffix becomes longer and payload becomes smaller.
+        Your build loop automatically handles that correctly.
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">Code (Python)</h2>
+      <pre><code>class Solution:
+    def splitMessage(self, message: str, limit: int):
+        n = len(message)
+
+        for b in range(1, n + 1):
+            len_b = len(str(b))
+            total_capacity = 0
+
+            a = 1
+            while a &lt;= b:
+                digits = len(str(a))
+                end = min(b, 10**digits - 1)
+                count = end - a + 1
+
+                suffix_length = digits + len_b + 3
+
+                if suffix_length &gt;= limit:
+                    total_capacity = -1
+                    break
+
+                total_capacity += count * (limit - suffix_length)
+                a = end + 1
+
+            if total_capacity &lt; n:
+                continue
+
+            result = []
+            index = 0
+
+            for a in range(1, b + 1):
+                suffix = f"&lt;{a}/{b}&gt;"
+                cap = limit - len(suffix)
+                part = message[index:index + cap]
+                index += cap
+                result.append(part + suffix)
+
+            return result
+
+        return []</code></pre>
+
+      <p class="small">
+        Complexity:
+        checking each b is about O(log b) due to digit blocks.
+        Building the answer is O(b).
+        This is fast enough because we return as soon as we find the smallest valid b.
+      </p>
+    </div>
+
+    <footer>
+      <div>© Rakshith</div>
+      <div><a href="mailto:theraksith.dev@gmail.com">theraksith.dev@gmail.com</a> • <a href="https://github.com/Therakshith-dev">GitHub</a></div>
+    </footer>
+  </div>
+
+  <script>
+    // Toggle + persist theme for all pages
+    const btn = document.getElementById("themeBtn");
+
+    function applyTheme(theme){
+      if(theme === "dark") document.documentElement.classList.add("dark");
+      else document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", theme);
+    }
+
+    btn.addEventListener("click", () => {
+      const isDark = document.documentElement.classList.contains("dark");
+      applyTheme(isDark ? "light" : "dark");
+    });
+  </script>
+</body>
+</html>
