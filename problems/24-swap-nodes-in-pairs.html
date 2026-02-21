@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeetCode 24 — Swap Nodes in Pairs</title>
+
+<style>
+:root {
+    --bg: #ffffff;
+    --text: #111111;
+    --card: #f5f5f5;
+    --accent: #2563eb;
+    --danger-bg: #2b2b2b;
+    --danger-text: #ff4d4d;
+    --insight-bg: #f0f9ff;
+    --insight-border: #2563eb;
+}
+
+body.dark {
+    --bg: #0a0a0a;
+    --text: #e5e5e5;
+    --card: #151515;
+    --accent: #60a5fa;
+    --danger-bg: #1a1a1a;
+    --danger-text: #ff6b6b;
+    --insight-bg: #121212;
+    --insight-border: #60a5fa;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: 0.2s ease;
+}
+
+.container {
+    max-width: 800px;
+    margin: 60px auto;
+    padding: 0 20px;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+button {
+    background: var(--card);
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+h1 {
+    margin-bottom: 30px;
+}
+
+.section {
+    margin-bottom: 40px;
+}
+
+.card {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+pre {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+.important-line {
+    background: var(--danger-bg);
+    color: var(--danger-text);
+    font-family: monospace;
+    padding: 14px 18px;
+    border-left: 5px solid var(--danger-text);
+    border-radius: 6px;
+    margin: 25px 0;
+}
+
+.insight-block {
+    background: var(--insight-bg);
+    border-left: 4px solid var(--insight-border);
+    padding: 18px;
+    border-radius: 6px;
+    margin-top: 20px;
+    font-family: monospace;
+}
+
+footer {
+    margin-top: 80px;
+    text-align: center;
+    opacity: 0.6;
+    font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="topbar">
+    <a href="../index.html">← Back</a>
+    <button onclick="toggleTheme()">Toggle Theme</button>
+</div>
+
+<h1>LeetCode 24 — Swap Nodes in Pairs</h1>
+
+<div class="section card">
+<h3>Core Idea</h3>
+<p>
+We do <strong>not</strong> swap values.
+We rewire pointers.
+</p>
+
+<p>
+For every pair:
+</p>
+
+<ul>
+<li>First node skips second</li>
+<li>Second points to first</li>
+<li>Previous connects to second</li>
+</ul>
+
+<p>
+Repeat until fewer than two nodes remain.
+</p>
+</div>
+
+<div class="section">
+<h3>Critical Pointer Rewiring</h3>
+
+<div class="important-line">
+first_node.next = second_node.next<br>
+second_node.next = first_node<br>
+previous_node.next = second_node
+</div>
+
+<p>
+These three lines perform the swap.
+</p>
+
+<p>
+If you change the order, the structure breaks.
+</p>
+</div>
+
+<div class="section">
+<h3>Why We Need a Fixed Starting Node</h3>
+
+<div class="insight-block">
+fixed_list = ListNode(0)<br>
+fixed_list.next = input_list
+</div>
+
+<p>
+If the first pair swaps, the head changes.
+The fixed node ensures we never lose the new head.
+</p>
+</div>
+
+<div class="section">
+<h3>Full Implementation</h3>
+
+<pre><code>from typing import Optional
+
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+
+class Solution:
+    def swapPairs(self, input_list: Optional[ListNode]) -> Optional[ListNode]:
+
+        if not input_list or not input_list.next:
+            return input_list
+
+        fixed_list = ListNode(0)
+        fixed_list.next = input_list
+
+        previous_node = fixed_list
+
+        while previous_node.next and previous_node.next.next:
+
+            first_node = previous_node.next
+            second_node = previous_node.next.next
+
+            first_node.next = second_node.next
+            second_node.next = first_node
+            previous_node.next = second_node
+
+            previous_node = first_node
+
+        return fixed_list.next</code></pre>
+</div>
+
+<footer>
+© Rakshith
+</footer>
+
+</div>
+
+<script>
+function toggleTheme() {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("theme",
+        document.body.classList.contains("dark") ? "dark" : "light");
+}
+
+if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark");
+}
+</script>
+
+</body>
+</html>
