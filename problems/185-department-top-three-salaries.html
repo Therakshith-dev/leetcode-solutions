@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeetCode 185 — Department Top Three Salaries</title>
+
+<style>
+:root {
+    --bg: #ffffff;
+    --text: #111111;
+    --card: #f5f5f5;
+    --accent: #2563eb;
+    --danger-bg: #2b2b2b;
+    --danger-text: #ff4d4d;
+    --insight-bg: #f0f9ff;
+    --insight-border: #2563eb;
+}
+
+body.dark {
+    --bg: #0a0a0a;
+    --text: #e5e5e5;
+    --card: #151515;
+    --accent: #60a5fa;
+    --danger-bg: #1a1a1a;
+    --danger-text: #ff6b6b;
+    --insight-bg: #121212;
+    --insight-border: #60a5fa;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: 0.2s ease;
+}
+
+.container {
+    max-width: 800px;
+    margin: 60px auto;
+    padding: 0 20px;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+button {
+    background: var(--card);
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+h1 {
+    margin-bottom: 30px;
+}
+
+.section {
+    margin-bottom: 40px;
+}
+
+.card {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+pre {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+.important-line {
+    background: var(--danger-bg);
+    color: var(--danger-text);
+    font-family: monospace;
+    padding: 14px 18px;
+    border-left: 5px solid var(--danger-text);
+    border-radius: 6px;
+    margin: 25px 0;
+}
+
+.insight-block {
+    background: var(--insight-bg);
+    border-left: 4px solid var(--insight-border);
+    padding: 18px;
+    border-radius: 6px;
+    margin-top: 20px;
+    font-family: monospace;
+}
+
+footer {
+    margin-top: 80px;
+    text-align: center;
+    opacity: 0.6;
+    font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="topbar">
+    <a href="../index.html">← Back</a>
+    <button onclick="toggleTheme()">Toggle Theme</button>
+</div>
+
+<h1>LeetCode 185 — Department Top Three Salaries</h1>
+
+<div class="section card">
+<h3>Core Idea</h3>
+<p>
+We must find employees whose salary is in the top <strong>three unique salaries</strong>
+within their department.
+</p>
+
+<p>
+The key word is <strong>unique</strong>.
+If two employees earn the same salary, they share the same rank.
+</p>
+
+<p>
+The cleanest way to solve this in PostgreSQL is by using:
+</p>
+
+<ul>
+<li><code>DENSE_RANK()</code></li>
+<li><code>PARTITION BY</code></li>
+<li><code>ORDER BY salary DESC</code></li>
+</ul>
+</div>
+
+<div class="section">
+<h3>Critical Ranking Logic</h3>
+
+<div class="important-line">
+DENSE_RANK() OVER (<br>
+&nbsp;&nbsp;&nbsp;&nbsp;PARTITION BY departmentId<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ORDER BY salary DESC<br>
+)
+</div>
+
+<p>
+This assigns a rank inside each department separately.
+</p>
+
+<ul>
+<li>Highest salary → Rank 1</li>
+<li>Second highest unique salary → Rank 2</li>
+<li>Third highest unique salary → Rank 3</li>
+</ul>
+
+<p>
+Employees with the same salary receive the same rank.
+</p>
+</div>
+
+<div class="section">
+<h3>Why We Use DENSE_RANK (Not ROW_NUMBER)</h3>
+
+<div class="insight-block">
+ROW_NUMBER() → gives every row a unique number<br>
+RANK() → leaves gaps when ties exist<br>
+DENSE_RANK() → no gaps, handles duplicates correctly
+</div>
+
+<p>
+Example (IT Department):
+</p>
+
+<ul>
+<li>90000 → Rank 1</li>
+<li>85000 → Rank 2</li>
+<li>85000 → Rank 2</li>
+<li>70000 → Rank 3</li>
+<li>69000 → Rank 4</li>
+</ul>
+
+<p>
+We only keep ranks ≤ 3.
+</p>
+</div>
+
+<div class="section">
+<h3>Complete PostgreSQL Query</h3>
+
+<pre><code>SELECT
+    d.name AS "Department",
+    e.name AS "Employee",
+    e.salary AS "Salary"
+FROM (
+    SELECT
+        *,
+        DENSE_RANK() OVER (
+            PARTITION BY departmentId
+            ORDER BY salary DESC
+        ) AS rnk
+    FROM Employee
+) e
+JOIN Department d
+    ON e.departmentId = d.id
+WHERE e.rnk &lt;= 3;</code></pre>
+</div>
+
+<div class="section">
+<h3>How It Works Step-by-Step</h3>
+
+<ol>
+<li>Rank employees inside each department using DENSE_RANK.</li>
+<li>Keep only employees where rank ≤ 3.</li>
+<li>Join Department table to get department names.</li>
+</ol>
+
+<p>
+Time complexity is efficient because window functions are optimized in PostgreSQL.
+</p>
+</div>
+
+<footer>
+© Rakshith
+</footer>
+
+</div>
+
+<script>
+function toggleTheme() {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("theme",
+        document.body.classList.contains("dark") ? "dark" : "light");
+}
+
+if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark");
+}
+</script>
+
+</body>
+</html>
