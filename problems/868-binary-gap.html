@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeetCode 868 — Binary Gap</title>
+
+<style>
+:root {
+    --bg: #ffffff;
+    --text: #111111;
+    --card: #f5f5f5;
+    --accent: #2563eb;
+    --danger-bg: #2b2b2b;
+    --danger-text: #ff4d4d;
+    --insight-bg: #f0f9ff;
+    --insight-border: #2563eb;
+}
+
+body.dark {
+    --bg: #0a0a0a;
+    --text: #e5e5e5;
+    --card: #151515;
+    --accent: #60a5fa;
+    --danger-bg: #1a1a1a;
+    --danger-text: #ff6b6b;
+    --insight-bg: #121212;
+    --insight-border: #60a5fa;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: 0.2s ease;
+}
+
+.container {
+    max-width: 800px;
+    margin: 60px auto;
+    padding: 0 20px;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+button {
+    background: var(--card);
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+h1 {
+    margin-bottom: 30px;
+}
+
+.section {
+    margin-bottom: 40px;
+}
+
+.card {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 8px;
+}
+
+pre {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+}
+
+.important-line {
+    background: var(--danger-bg);
+    color: var(--danger-text);
+    font-family: monospace;
+    padding: 14px 18px;
+    border-left: 5px solid var(--danger-text);
+    border-radius: 6px;
+    margin: 25px 0;
+}
+
+.insight-block {
+    background: var(--insight-bg);
+    border-left: 4px solid var(--insight-border);
+    padding: 18px;
+    border-radius: 6px;
+    margin-top: 20px;
+    font-family: monospace;
+}
+
+footer {
+    margin-top: 80px;
+    text-align: center;
+    opacity: 0.6;
+    font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="topbar">
+    <a href="../index.html">← Back</a>
+    <button onclick="toggleTheme()">Toggle Theme</button>
+</div>
+
+<h1>LeetCode 868 — Binary Gap</h1>
+
+<div class="section card">
+<h3>Core Idea</h3>
+<p>
+We scan the binary representation of a number from right to left.
+</p>
+
+<p>
+Each time we encounter a <strong>1</strong>, we calculate the distance
+from the previous <strong>1</strong>.
+</p>
+
+<p>
+We keep track of:
+</p>
+
+<ul>
+<li>The last position where a 1 was found</li>
+<li>The maximum distance seen so far</li>
+</ul>
+</div>
+
+<div class="section">
+<h3>Critical Condition</h3>
+
+<div class="important-line">
+if n % 2 == 1:
+</div>
+
+<p>
+This checks whether the current least significant bit is 1.
+</p>
+
+<p>
+Since binary numbers alternate between even and odd:
+</p>
+
+<ul>
+<li>Odd number → last bit is 1</li>
+<li>Even number → last bit is 0</li>
+</ul>
+</div>
+
+<div class="section">
+<h3>How We Move Through Bits</h3>
+
+<div class="insight-block">
+n = n // 2
+</div>
+
+<p>
+Integer division by 2 removes the last binary bit.
+</p>
+
+<p>
+Example for n = 22:
+</p>
+
+<ul>
+<li>22 → 10110</li>
+<li>11 → 1011</li>
+<li>5 → 101</li>
+<li>2 → 10</li>
+<li>1 → 1</li>
+</ul>
+
+<p>
+Each iteration moves one bit to the right.
+</p>
+</div>
+
+<div class="section">
+<h3>Step-by-Step Example (n = 22)</h3>
+
+<p>Binary of 22 = <strong>10110</strong></p>
+
+<ul>
+<li>Position 0 → 0 → ignore</li>
+<li>Position 1 → 1 → last_position = 1</li>
+<li>Position 2 → 1 → distance = 2 - 1 = 1</li>
+<li>Position 3 → 0 → ignore</li>
+<li>Position 4 → 1 → distance = 4 - 2 = 2</li>
+</ul>
+
+<p>
+Maximum distance = <strong>2</strong>
+</p>
+</div>
+
+<div class="section">
+<h3>Full Implementation</h3>
+
+<pre><code>class Solution:
+    def binaryGap(self, n: int) -> int:
+        last_position = -1
+        max_distance = 0
+        position = 0
+
+        while n > 0:
+            if n % 2 == 1:
+                if last_position != -1:
+                    max_distance = max(max_distance, position - last_position)
+                last_position = position
+
+            n = n // 2
+            position += 1
+
+        return max_distance</code></pre>
+</div>
+
+<div class="section">
+<h3>Time & Space Complexity</h3>
+
+<ul>
+<li>Time: O(log n) → one pass through binary digits</li>
+<li>Space: O(1)</li>
+</ul>
+</div>
+
+<footer>
+© Rakshith
+</footer>
+
+</div>
+
+<script>
+function toggleTheme() {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("theme",
+        document.body.classList.contains("dark") ? "dark" : "light");
+}
+
+if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark");
+}
+</script>
+
+</body>
+</html>
