@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeetCode 1115 — Print FooBar Alternately</title>
+
+<style>
+:root {
+    --bg: #ffffff;
+    --text: #111111;
+    --card: #f5f5f5;
+    --accent: #2563eb;
+    --danger-bg: #2b2b2b;
+    --danger-text: #ff4d4d;
+    --insight-bg: #f0f9ff;
+    --insight-border: #2563eb;
+}
+
+body.dark {
+    --bg: #0a0a0a;
+    --text: #e5e5e5;
+    --card: #151515;
+    --accent: #60a5fa;
+    --danger-bg: #1a1a1a;
+    --danger-text: #ff6b6b;
+    --insight-bg: #121212;
+    --insight-border: #60a5fa;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: 0.2s ease;
+}
+
+.container {
+    max-width: 900px;
+    margin: 60px auto;
+    padding: 0 20px;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+button {
+    background: var(--card);
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+h1 { margin-bottom: 30px; }
+.section { margin-bottom: 50px; }
+
+.card {
+    background: var(--card);
+    padding: 25px;
+    border-radius: 10px;
+}
+
+pre {
+    background: var(--card);
+    padding: 20px;
+    border-radius: 10px;
+    overflow-x: auto;
+}
+
+.important-line {
+    background: var(--danger-bg);
+    color: var(--danger-text);
+    font-family: monospace;
+    padding: 14px 18px;
+    border-left: 5px solid var(--danger-text);
+    border-radius: 6px;
+    margin: 25px 0;
+}
+
+.insight-block {
+    background: var(--insight-bg);
+    border-left: 4px solid var(--insight-border);
+    padding: 18px;
+    border-radius: 6px;
+    margin-top: 20px;
+    font-family: monospace;
+}
+
+footer {
+    margin-top: 100px;
+    text-align: center;
+    opacity: 0.6;
+    font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="topbar">
+<a href="../index.html">← Back</a>
+<button onclick="toggleTheme()">Toggle Theme</button>
+</div>
+
+<h1>LeetCode 1115 — Print FooBar Alternately</h1>
+
+<div class="section card">
+<h3>Problem Summary</h3>
+<p>
+Two threads share the same object:
+</p>
+<ul>
+<li>Thread A calls <strong>foo()</strong></li>
+<li>Thread B calls <strong>bar()</strong></li>
+</ul>
+<p>
+We must print:
+</p>
+<pre>foobarfoobarfoobar...</pre>
+<p>
+Exactly <strong>n</strong> times, strictly alternating.
+</p>
+</div>
+
+<div class="section">
+<h3>Why This Is Hard</h3>
+
+<div class="important-line">
+Threads execute independently and unpredictably.
+</div>
+
+<p>
+Without synchronization:
+</p>
+
+<pre>
+foofoofoobarbarbar
+or
+barfoofoobarfoo
+</pre>
+
+<p>
+The order becomes non-deterministic.
+We must enforce strict alternation.
+</p>
+</div>
+
+<div class="section card">
+<h3>Solution 1 — Using Condition Variable</h3>
+
+<pre><code>import threading
+
+class FooBar:
+    def __init__(self, n):
+        self.n = n
+        self.turn = 0
+        self.cv = threading.Condition()
+
+    def foo(self, printFoo):
+        for _ in range(self.n):
+            with self.cv:
+                while self.turn != 0:
+                    self.cv.wait()
+                printFoo()
+                self.turn = 1
+                self.cv.notify()
+
+    def bar(self, printBar):
+        for _ in range(self.n):
+            with self.cv:
+                while self.turn != 1:
+                    self.cv.wait()
+                printBar()
+                self.turn = 0
+                self.cv.notify()</code></pre>
+
+<h4>Core Mechanism</h4>
+
+<div class="insight-block">
+turn = 0 → foo's turn  
+turn = 1 → bar's turn
+</div>
+
+<p>
+Each thread:
+</p>
+<ul>
+<li>Waits until it's its turn</li>
+<li>Prints</li>
+<li>Switches turn</li>
+<li>Notifies the other thread</li>
+</ul>
+
+<h4>Execution Timeline</h4>
+
+<pre>
+Initial: turn = 0
+
+Thread A: prints foo → turn = 1
+Thread B: prints bar → turn = 0
+Thread A: prints foo → turn = 1
+Thread B: prints bar → turn = 0
+...
+</pre>
+</div>
+
+<div class="section card">
+<h3>Solution 2 — Using Semaphores</h3>
+
+<pre><code>import threading
+
+class FooBar:
+    def __init__(self, n):
+        self.n = n
+        self.foo_sem = threading.Semaphore(1)
+        self.bar_sem = threading.Semaphore(0)
+
+    def foo(self, printFoo):
+        for _ in range(self.n):
+            self.foo_sem.acquire()
+            printFoo()
+            self.bar_sem.release()
+
+    def bar(self, printBar):
+        for _ in range(self.n):
+            self.bar_sem.acquire()
+            printBar()
+            self.foo_sem.release()</code></pre>
+
+<h4>Why This Is Elegant</h4>
+
+<ul>
+<li>foo starts with 1 permit</li>
+<li>bar starts blocked</li>
+<li>Each release unlocks the other thread</li>
+<li>Perfect alternation</li>
+</ul>
+
+<h4>Visualization</h4>
+
+<pre>
+foo_sem = 1
+bar_sem = 0
+
+foo acquires → prints → releases bar
+bar acquires → prints → releases foo
+</pre>
+</div>
+
+<div class="section card">
+<h3>Deadlock Consideration</h3>
+
+<p>
+Deadlock would occur if:
+</p>
+
+<ul>
+<li>Both semaphores started at 0</li>
+<li>Both threads waited forever</li>
+</ul>
+
+<p>
+Correct initialization prevents this.
+</p>
+</div>
+
+<div class="section card">
+<h3>Performance</h3>
+
+<ul>
+<li>Time Complexity: O(n)</li>
+<li>Space Complexity: O(1)</li>
+</ul>
+
+<p>
+Each thread performs exactly n iterations.
+</p>
+</div>
+
+<footer>
+© Rakshith
+</footer>
+
+</div>
+
+<script>
+function toggleTheme() {
+document.body.classList.toggle("dark");
+localStorage.setItem("theme",
+document.body.classList.contains("dark") ? "dark" : "light");
+}
+
+if (localStorage.getItem("theme") === "dark") {
+document.body.classList.add("dark");
+}
+</script>
+
+</body>
+</html>
